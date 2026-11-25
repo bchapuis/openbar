@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>local.OpenBar.helper</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Library/PrivilegedHelperTools/local.OpenBar.helper</string>
+    </array>
+    <!-- Started on demand, when the app first talks to the service. -->
+    <key>MachServices</key>
+    <dict>
+        <key>local.OpenBar.helper</key>
+        <true/>
+    </dict>
+</dict>
+</plist>
