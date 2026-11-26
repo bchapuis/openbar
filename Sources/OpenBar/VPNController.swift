@@ -91,6 +91,9 @@ final class VPNController: ObservableObject {
     /// True when the VPN is up or coming up.
     var isOn: Bool { pendingConnect || state == .connecting || state == .connected }
 
+    /// Every value `symbolName` can take.
+    nonisolated static let allSymbolNames = ["shield.slash", "shield.lefthalf.filled", "lock.shield.fill"]
+
     var symbolName: String {
         if helperBusy { return "shield.lefthalf.filled" }
         switch state {

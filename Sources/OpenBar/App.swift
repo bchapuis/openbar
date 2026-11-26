@@ -13,14 +13,35 @@ struct OpenBarApp: App {
     /// The menu bar ignores SwiftUI font modifiers on its label, and a shield
     /// drawn at the default size looks small next to other menu bar icons.
     /// Render the symbol at an explicit size instead.
+    ///
+    /// The menu bar sizes its item from the label image and does not always
+    /// resize it when the image changes, so a symbol bigger than the one shown
+    /// before gets clipped. Draw every symbol centered on one canvas that fits
+    /// them all, so the item's size never changes.
     private static func menuBarImage(_ symbolName: String) -> NSImage {
-        let configuration = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
-            .withSymbolConfiguration(configuration) ?? NSImage()
+        let symbol = menuBarSymbol(symbolName)
+        let canvas = menuBarCanvas
+        let image = NSImage(size: canvas, flipped: false) { rect in
+            let origin = NSPoint(x: (rect.width - symbol.size.width) / 2,
+                                 y: (rect.height - symbol.size.height) / 2)
+            symbol.draw(in: NSRect(origin: origin, size: symbol.size))
+            return true
+        }
         // Template images follow the menu bar's light or dark appearance.
         image.isTemplate = true
         return image
     }
+
+    private static func menuBarSymbol(_ symbolName: String) -> NSImage {
+        let configuration = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
+        return NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+            .withSymbolConfiguration(configuration) ?? NSImage()
+    }
+
+    /// The smallest size that holds every symbol the menu bar can show.
+    private static let menuBarCanvas: NSSize = VPNController.allSymbolNames
+        .map { menuBarSymbol($0).size }
+        .reduce(NSSize.zero) { NSSize(width: max($0.width, $1.width), height: max($0.height, $1.height)) }
 
     var body: some Scene {
         MenuBarExtra {
